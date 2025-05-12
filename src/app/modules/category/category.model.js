@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import mongoose from "mongoose";
-const { Schema } = mongoose;
+const { Schema, model } = mongoose;
 
 const categorySchema = new Schema({
   category_name: {
@@ -54,4 +54,4 @@ const categorySchema = new Schema({
 
 export const CategoryModel =
   mongoose.models.categoryData ??
-  mongoose.model("categoryData", categorySchema);
+  model("categoryData", categorySchema, "categoryData");

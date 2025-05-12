@@ -1,13 +1,14 @@
 import httpStatus from "http-status";
-import catchAsync from "../../../shared/catchAsync.js";
-import sendResponse from "../../../shared/sendResponse.js";
+import catchAsync from "../../../utils/catchAsync.js";
+import sendResponse from "../../../utils/sendResponse.js";
 import { categoryServices } from "./category.service.js";
 
 const createCategory = catchAsync(async (req, res) => {
-  const payload = req.body;
-  console.log("payload >>", payload);
-  return false;
-  const result = await categoryServices.createCategoryToDB(payload);
+  const file = req.file;
+  const payload = JSON.parse(req.body.data);
+
+  const result = await categoryServices.createCategoryToDB(file, payload);
+
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
