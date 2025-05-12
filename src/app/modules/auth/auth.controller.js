@@ -1,9 +1,9 @@
 import httpStatus from "http-status";
-import catchAsync from "../../../shared/catchAsync.js";
-import sendResponse from "../../../shared/sendResponse.js";
-import { authServices } from "./auth.service.js";
 import config from "../../../config/index.js";
-import { sendMail } from "../../../shared/nodemailder.js";
+import catchAsync from "../../../utils/catchAsync.js";
+import { sendMail } from "../../../utils/nodemailder.js";
+import sendResponse from "../../../utils/sendResponse.js";
+import { authServices } from "./auth.service.js";
 
 const singupUser = catchAsync(async (req, res) => {
   const user = req.body;

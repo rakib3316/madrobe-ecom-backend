@@ -1,8 +1,8 @@
 import httpStatus from "http-status";
+import config from "../../config/index.js";
 import ApiError from "../../errors/ApiError.js";
 import { jwtHelpers } from "../../helpers/jwtHelpers.js";
-import config from "../../config/index.js";
-import catchAsync from "../../shared/catchAsync.js";
+import catchAsync from "../../utils/catchAsync.js";
 
 const auth = () => {
   return catchAsync(async (req, res, next) => {
@@ -21,7 +21,7 @@ const auth = () => {
     // console.log("veri user >>", verifiedUser);
 
     req.user = verifiedUser;
-    next()
+    next();
   });
 };
 

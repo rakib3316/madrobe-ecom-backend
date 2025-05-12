@@ -1,34 +1,59 @@
-import mongoose from "mongoose";
-const { Schema, model } = mongoose;
 import bcrypt from "bcrypt";
+import dayjs from "dayjs";
+import mongoose from "mongoose";
 import config from "../../../config/index.js";
+const { Schema, model } = mongoose;
 
-const userSchema = new Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    password: {
-      type: String,
-      required: true,
-    },
-    image: {
-      type: String,
-    },
+const userSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
   },
-  {
-    timestamps: true,
-    toJSON: {
-      virtuals: true,
-    },
-  }
-);
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  role: {
+    type: String,
+    required: true,
+  },
+  image: {
+    type: String,
+    default: null,
+  },
+  posted_by: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "userData",
+  },
+  posted_user: {
+    type: String,
+    required: true,
+  },
+  posted_date: {
+    type: Date,
+    required: true,
+    default: dayjs().toString(),
+  },
+  modified_by: {
+    type: Schema.Types.ObjectId,
+    ref: "userData",
+    default: null,
+  },
+  modified_user: {
+    type: String,
+    default: null,
+  },
+  modified_date: {
+    type: Date,
+    default: null,
+  },
+});
 
 // Instance methods
 userSchema.statics.isUserExist = async function (email) {
@@ -56,4 +81,5 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-export const UserModel = model("userData", userSchema, "userData");
+export const UserModel =
+  mongoose.models.userData ?? model("userData", userSchema, "userData");

@@ -1,10 +1,9 @@
-import jwt from "jsonwebtoken";
-import httpStatus from "http-status";
-import { UserModel } from "./auth.model.js";
-import ApiError from "../../../errors/ApiError.js";
-import config from "../../../config/index.js";
-import { jwtHelpers } from "../../../helpers/jwtHelpers.js";
 import bcrypt from "bcrypt";
+import httpStatus from "http-status";
+import config from "../../../config/index.js";
+import ApiError from "../../../errors/ApiError.js";
+import { jwtHelpers } from "../../../helpers/jwtHelpers.js";
+import { UserModel } from "./auth.model.js";
 
 const singupUserToDB = async (user) => {
   const newUser = await UserModel.create(user);
@@ -57,7 +56,8 @@ const loginUser = async (payload) => {
 
   return {
     userDetails: {
-      fullName: isUserExist?.fullName,
+      user_id: isUserExist?._id,
+      fullName: isUserExist?.name,
       email: isUserExist?.email,
       role: isUserExist?.role,
       image: isUserExist?.image,
