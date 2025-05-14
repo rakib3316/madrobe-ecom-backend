@@ -1,13 +1,13 @@
 import config from "../../config/index.js";
 import ApiError from "../../errors/ApiError.js";
 import handleCastError from "../../errors/handleCastError.js";
-import handleValidationError from "../../errors/handleValidationError.js";
 import handleDuplicationError from "../../errors/handleDuplicationError.js";
 import handleJsonWebTokenError from "../../errors/handleJsonWebTokenError.js";
 import handleJsonWebTokenExpiredError from "../../errors/handleJsonWebTokenExpiredError.js";
+import handleValidationError from "../../errors/handleValidationError.js";
 
 const globalErrorHandler = (err, req, res, next) => {
-  console.log("glob err >>", err);
+  config.env === "production" && console.log("global error >>", err);
   config.env === "development" && console.log("global error handler >>", err);
 
   let statusCode = 500,
@@ -62,7 +62,7 @@ const globalErrorHandler = (err, req, res, next) => {
         message: err?.message,
       },
     ];
-  } 
+  }
 
   res.status(statusCode).json({
     success: false,
