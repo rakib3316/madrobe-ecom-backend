@@ -29,9 +29,9 @@ const loginUser = catchAsync(async (req, res) => {
 
   // set refresh token into cookie
   const cookieOptions = {
-    secure: config.NODE_ENV === "production",
+    secure: config.env === "production",
     httpOnly: true,
-    sameSite: "none",
+    sameSite: config.env === "production" ? "none" : "lax",
     maxAge: 1000 * 60 * 60 * 24 * 365,
   };
 
@@ -50,14 +50,7 @@ const loginUser = catchAsync(async (req, res) => {
 
 const refreshToken = catchAsync(async (req, res) => {
   const { refreshToken } = req.cookies;
-
   const result = await authServices.refreshToken(refreshToken);
-
-  const cookieOptions = {
-    secure: config.env === "production",
-    httpOnly: true,
-  };
-  res.cookie("refreshToken", refreshToken, cookieOptions);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
