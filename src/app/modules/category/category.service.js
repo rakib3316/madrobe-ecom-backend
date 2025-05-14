@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import mongoose from "mongoose";
 import { sendImageToCloudinar } from "../../../utils/sendImageToCloudinary.js";
 import { CategoryModel } from "./category.model.js";
@@ -9,10 +10,20 @@ const createCategoryToDB = async (file, category) => {
     session.startTransaction();
 
     if (file) {
-      let image_name = "madrobe_ecom";
+      let fileName = file.originalname.split(".")[0];
+      let today = dayjs(new Date()).format("DD_MM_YYYY");
+      let image_name = `${fileName}_${today}`;
+
       let cloudinaryResult = await sendImageToCloudinar(image_name, file.path);
 
-      category.image = cloudinaryResult.secure_url;
+      let imagePayload = {
+        url: cloudinaryResult.secure_url,
+        public_id: cloudinaryResult.public_id,
+        upload_date: cloudinaryResult.created_at,
+        source: "cloudinary",
+      };
+
+      category.image = imagePayload;
     }
 
     const newCategory = await CategoryModel.create(category);

@@ -12,8 +12,10 @@ const categorySchema = new Schema({
     default: null,
   },
   image: {
-    type: String,
-    default: null,
+    url: { type: String, default: null },
+    public_id: { type: String, default: null },
+    source: { type: String, enum: ["cloudinary", "aws"] },
+    upload_date: { type: Date, default: null },
   },
   children: {
     type: [Schema.Types.ObjectId],
