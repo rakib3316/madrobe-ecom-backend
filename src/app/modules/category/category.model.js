@@ -19,7 +19,9 @@ const categorySchema = new Schema({
   },
   children: {
     type: [Schema.Types.ObjectId],
-    default: null,
+    ref: "categoryData",
+    default: [],
+    get: (value) => (value.length === 0 ? null : value),
   },
   isActive: {
     type: Boolean,
@@ -53,6 +55,9 @@ const categorySchema = new Schema({
     default: null,
   },
 });
+
+categorySchema.set("toObject", { getters: true });
+categorySchema.set("toJSON", { getters: true });
 
 export const CategoryModel =
   mongoose.models.categoryData ??

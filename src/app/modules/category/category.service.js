@@ -3,6 +3,68 @@ import mongoose from "mongoose";
 import { sendImageToCloudinar } from "../../../utils/sendImageToCloudinary.js";
 import { CategoryModel } from "./category.model.js";
 
+const getCategoriesFromDB = async (query) => {
+  let filterQuery = { ...query };
+
+  const searchTerm = query?.searchTerm || "";
+  const sort = query?.sort || "-posted_date";
+  const limit = Number(query?.limit) || 10;
+  const page = Number(query?.page) || 1;
+  const skip = (page - 1) * limit;
+
+  const searchFields = ["category_name"];
+  const excluseFields = ["searchTerm", "sort", "limit", "page"];
+  excluseFields.forEach((ele) => delete filterQuery[ele]);
+
+  let modifiedFilterQuery = {};
+
+  Object.keys(filterQuery).forEach((item) => {
+    modifiedFilterQuery[item] = {
+      $in: filterQuery[item].split(",").map((field) => field.trim()),
+    };
+
+    if (
+      filterQuery[item] === "true" ||
+      filterQuery[item] === "false" ||
+      filterQuery[item] === "true,false" ||
+      filterQuery[item] === "false,true"
+    ) {
+      modifiedFilterQuery[item] = {
+        $in: filterQuery[item]
+          .split(",")
+          .map((field) => field.trim())
+          .map((item) => JSON.parse(item)),
+      };
+    }
+  });
+
+  const finalQuery = {
+    $or: searchFields.map((field) => ({
+      [field]: { $regex: searchTerm, $options: "i" },
+    })),
+    ...modifiedFilterQuery,
+  };
+
+  const totalCategories = await CategoryModel.countDocuments(finalQuery);
+  const categories = await CategoryModel.find(finalQuery)
+    .sort(sort)
+    .skip(skip)
+    .limit(limit);
+
+  if (!categories) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Failed to get categories.");
+  }
+
+  return {
+    meta: {
+      total: totalCategories,
+      page,
+      limit,
+    },
+    data: categories,
+  };
+};
+
 const createCategoryToDB = async (file, category) => {
   const session = await mongoose.startSession();
 
@@ -40,4 +102,4 @@ const createCategoryToDB = async (file, category) => {
   }
 };
 
-export const categoryServices = { createCategoryToDB };
+export const CategoryServices = { getCategoriesFromDB, createCategoryToDB };
