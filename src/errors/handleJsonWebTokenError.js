@@ -6,7 +6,7 @@ const handleJsonWebTokenError = (error) => {
     },
   ];
 
-  const statusCode = 400;
+  const statusCode = 401;
   return {
     statusCode,
     message: "Invalid token",
